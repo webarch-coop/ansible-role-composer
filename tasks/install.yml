@@ -1,0 +1,52 @@
+---
+- name: Install Composer
+  block:
+
+    - name: Packages present
+      apt:
+        pkg:
+          - gpg
+
+    - name: GPG public key for contact@packagist.com present
+      copy:
+        src: packagist.asc
+        dest: /root/packagist.asc
+        mode: 0600
+
+    - name: GitHub GPG public key imported
+      command: gpg --import /root/packagist.asc
+      register: composer_gpg_import
+      changed_when: ( "not changed" not in composer_gpg_import.stderr )
+
+    - name: Composer GPG signature present
+      get_url:
+        url: "https://github.com/composer/composer/releases/download/{% if composer_version == 'latest' %}{{ composer_latest }}{% else %}{{ composer_version }}{% endif %}/composer.phar.asc"
+        dest: /root/composer.phar.asc
+        force: true
+        mode: 0600
+
+    - name: Composer present
+      get_url:
+        url: "https://github.com/composer/composer/releases/download/{% if composer_version == 'latest' %}{{ composer_latest }}{% else %}{{ composer_version }}{% endif %}/composer.phar"
+        dest: /root/composer.phar
+        force: true
+        mode: 0600
+
+    - name: Check the Composer GPG signature
+      command: gpg --verify --logger-fd 1 /root/composer.phar.asc
+      register: composer_gpg_check
+      check_mode: false
+      failed_when: ( "Good signature" not in composer_gpg_check.stdout )
+
+    - name: Install Composer
+      copy:
+        remote_src: true
+        src: /root/composer.phar
+        dest: /usr/local/bin/composer
+        mode: 0755
+        validate: php %s -n --no-ansi -V
+      when: not ansible_check_mode
+
+  tags:
+    - composer
+...

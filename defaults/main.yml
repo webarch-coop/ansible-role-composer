@@ -1,0 +1,5 @@
+---
+# Specify a tag from https://github.com/composer/composer/releases
+# or "latest" for the latest release
+composer_version: latest
+...
