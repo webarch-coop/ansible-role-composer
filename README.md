@@ -1,7 +1,8 @@
-# Install Composer
+# Ansible Composer Role
 
-This role installs Composer from
-[GitHub](https://github.com/composer/composer/releases).
+This Ansible role downloads Composer from
+[GitHub](https://github.com/composer/composer/releases), checks the GPG
+signature and then installs it to `/usr/local/bin/composer`.
 
 If `composer_version` is left to the default of `latest` then the latest
 version will be installed, if it is specified using a version tag, for example:
