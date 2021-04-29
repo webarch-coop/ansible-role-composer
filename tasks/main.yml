@@ -2,7 +2,7 @@
 - name: Install and update Composer
   block:
 
-    - name: Print the version of Composer to install
+    - name: Print the version of Composer required
       debug:
         var: composer_version
         verbosity: 1
@@ -17,7 +17,7 @@
     - name: Check installed Composer version
       block:
 
-        - name: Get the composer version
+        - name: Check the Composer version
           command: composer --no-ansi -V
           check_mode: false
           changed_when: false
@@ -52,14 +52,9 @@
         var: composer_latest
         verbosity: 1
 
-    - name: Set a fact to indicate that Composer needs to be instaled or updated
-      set_fact:
-        composer_install: true
-      when: ( composer_which.rc == 1 ) or ( composer_version == "latest" and composer_installed != composer_latest ) or ( composer_version != "latest" and composer_installed != composer_version )
-
     - name: Install Composer
       include_tasks: install.yml
-      when: ( composer_install is defined ) and ( composer_install )
+      when: ( composer_which.rc == 1 ) or ( composer_version == "latest" and composer_installed != composer_latest ) or ( composer_version != "latest" and composer_installed != composer_version )
 
   tags:
     - composer
