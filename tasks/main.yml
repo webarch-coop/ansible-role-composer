@@ -18,7 +18,7 @@
       block:
 
         - name: Check the Composer version
-          command: composer --no-ansi -V
+          command: composer --no-ansi -V -n
           check_mode: false
           changed_when: false
           register: composer_v
