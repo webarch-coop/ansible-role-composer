@@ -2,10 +2,11 @@
 - name: Install Composer
   block:
 
-    - name: Packages present
+    - name: Required packages present
       apt:
         pkg:
           - gpg
+          - php-cli
 
     - name: GPG public key for contact@packagist.com present
       copy:
