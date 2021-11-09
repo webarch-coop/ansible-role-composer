@@ -3,12 +3,12 @@
   block:
 
     - name: Print the version of Composer required
-      debug:
+      ansible.builtin.debug:
         var: composer_version
         verbosity: 1
 
     - name: Check if Composer is installed
-      command: which composer
+      ansible.builtin.command: which composer
       check_mode: false
       changed_when: false
       register: composer_which
@@ -18,24 +18,24 @@
       block:
 
         - name: Check the Composer version
-          command: composer --no-ansi -V -n
+          ansible.builtin.command: composer --no-ansi -V -n
           check_mode: false
           changed_when: false
           register: composer_v
 
         - name: Set a fact for the installed version of Composer
-          set_fact:
+          ansible.builtin.set_fact:
             composer_installed: "{{ composer_v.stdout.split(' ')[2] | trim }}"
 
         - name: Print the installed version of Composer
-          debug:
+          ansible.builtin.debug:
             var: composer_installed
             verbosity: 1
 
       when: composer_which.rc == 0
 
     - name: Check the latest version of Composer
-      uri:
+      ansible.builtin.uri:
         url: https://github.com/composer/composer/releases/latest
         method: HEAD
         status_code: 302
@@ -44,16 +44,16 @@
       register: composer_headers
 
     - name: Set a fact for the latest version of Composer
-      set_fact:
+      ansible.builtin.set_fact:
         composer_latest: "{{ composer_headers.location | urlsplit('path') | basename }}"
 
     - name: Print the latest version of Composer
-      debug:
+      ansible.builtin.debug:
         var: composer_latest
         verbosity: 1
 
     - name: Install Composer
-      include_tasks: install.yml
+      ansible.builtin.include_tasks: install.yml
       when: ( composer_which.rc == 1 ) or ( composer_version == "latest" and composer_installed != composer_latest ) or ( composer_version != "latest" and composer_installed != composer_version )
 
   tags:
