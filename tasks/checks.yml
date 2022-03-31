@@ -113,7 +113,7 @@
         - name: Set the Composer version to be installed to the latest LTS when the default PHP version is <= 7.2.4
           ansible.builtin.set_fact:
             composer_version: "{{ composer_lts }}"
-          when: composer_version == "latest" 
+          when: composer_version == "latest"
 
         - name: Print the version of Composer required
           ansible.builtin.debug:
