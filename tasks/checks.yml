@@ -1,0 +1,120 @@
+---
+- name: Composer and PHP version checks
+  block:
+
+    - name: Print the version of Composer required
+      ansible.builtin.debug:
+        var: composer_version
+        verbosity: 1
+
+    - name: Check the default version of PHP
+      ansible.builtin.command: php -v
+      check_mode: false
+      changed_when: false
+      register: composer_php_v
+
+    - name: Set a fact for the default version of PHP
+      ansible.builtin.set_fact:
+        composer_php_version: "{{ line.split(' ')[1] }}"
+      when: ansible_loop.first
+      loop: "{{ composer_php_v.stdout_lines }}"
+      loop_control:
+        loop_var: line
+        extended: true
+        label: "{{ ansible_loop.index }}"
+
+    - name: Check installed Composer version
+      block:
+
+        - name: Check the Composer version
+          ansible.builtin.command: composer --no-ansi -V -n
+          check_mode: false
+          changed_when: false
+          register: composer_v
+
+        - name: Set a fact for the installed version of Composer
+          ansible.builtin.set_fact:
+            composer_installed: "{{ composer_v.stdout.split(' ')[2] | trim }}"
+
+        - name: Print the installed version of Composer
+          ansible.builtin.debug:
+            var: composer_installed
+            verbosity: 1
+
+      when: composer_which.rc == 0
+
+    - name: Check the latest version of Composer
+      block:
+
+        - name: Check the latest version of Composer
+          ansible.builtin.uri:
+            url: https://github.com/composer/composer/releases/latest
+            method: HEAD
+            status_code: 302
+            follow_redirects: none
+          check_mode: false
+          register: composer_headers
+
+        - name: Set a fact for the latest version of Composer
+          ansible.builtin.set_fact:
+            composer_latest: "{{ composer_headers.location | urlsplit('path') | basename }}"
+
+        - name: Print the latest version of Composer
+          ansible.builtin.debug:
+            var: composer_latest
+            verbosity: 1
+
+      when: composer_version == "latest"
+
+    - name: Check the latest 2.2 LTS version of Composer when the default PHP version is <= 7.2.4
+      block:
+
+        - name: Download latest 2.2 LTS version of Composer
+          ansible.builtin.get_url:
+            url: https://getcomposer.org/download/latest-2.2.x/composer.phar
+            dest: /root/composer.2.2.x.phar
+            check_mode: false
+            changed_when: false
+
+        - name: Check the latest 2.2 LTS version of Composer
+          ansible.builtin.command: php composer.2.2.x.phar --no-ansi -V -n
+          args:
+            chdir: /root
+          check_mode: false
+          changed_when: false
+          register: composer_v_lts
+
+        - name: Set a fact for the installed version of Composer
+          ansible.builtin.set_fact:
+            composer_lts: "{{ composer_v_lts.stdout.split(' ')[2] | trim }}"
+
+        - name: Print the latest LTS version of Composer
+          ansible.builtin.debug:
+            var: composer_lts
+            verbosity: 1
+
+      when: composer_php_version is version('7.2.4', '<=')
+
+    # See https://blog.packagist.com/composer-2-3/
+    - name: Check that PHP >= 7.2.5 when the latest Composer or a version greater than or equal to 2.3.0 is to be installed
+      ansible.builtin.assert:
+        that:
+          - composer_php_version is version('7.2.5', '>=')
+      when: ( composer_version == "latest" ) or ( composer_version is version('2.3.0', '>=' ) )
+
+    - name: Check that the version of Composer to be installed is < 2.3.0 when PHP <= 7.2.4
+      ansible.builtin.assert:
+        that:
+          - composer_version is version('2.3.0', '<')
+      when: composer_php_version is version('7.2.4', '<=')
+
+    - name: Check if Composer is installed
+      ansible.builtin.command: which composer
+      check_mode: false
+      changed_when: false
+      register: composer_which
+      failed_when: composer_which.rc is not regex('0|1')
+
+  tags:
+    - composer
+...

@@ -2,33 +2,6 @@
 - name: Install Composer
   block:
 
-    - name: Required packages present
-      ansible.builtin.apt:
-        pkg:
-          - gpg
-          - php-cli
-
-    - name: GPG public key for contact@packagist.com present
-      ansible.builtin.copy:
-        src: packagist.asc
-        dest: /root/packagist.asc
-        mode: 0600
-      when: ( composer_version == "latest" ) or ( composer_version is version('2', '>') )
-
-    - name: GitHub GPG public key imported
-      ansible.builtin.command: gpg --import /root/packagist.asc
-      register: composer_gpg_import
-      changed_when: ( "not changed" not in composer_gpg_import.stderr )
-      when: ( composer_version == "latest" ) or ( composer_version is version('2', '>') )
-
-    - name: Composer GPG signature present
-      ansible.builtin.get_url:
-        url: "https://github.com/composer/composer/releases/download/{% if composer_version == 'latest' %}{{ composer_latest }}{% else %}{{ composer_version }}{% endif %}/composer.phar.asc"
-        dest: /root/composer.phar.asc
-        force: true
-        mode: 0600
-      when: ( composer_version == "latest" ) or ( composer_version is version('2', '>') )
-
     - name: Composer present
       ansible.builtin.get_url:
         url: "https://github.com/composer/composer/releases/download/{% if composer_version == 'latest' %}{{ composer_latest }}{% else %}{{ composer_version }}{% endif %}/composer.phar"
@@ -36,12 +9,39 @@
         force: true
         mode: 0600
 
-    - name: Check the Composer GPG signature
-      ansible.builtin.command: gpg --verify --logger-fd 1 /root/composer.phar.asc
-      register: composer_gpg_check
-      check_mode: false
-      changed_when: false
-      failed_when: ( "Good signature" not in composer_gpg_check.stdout )
+    - name: Check the GPG signature when installing version 2.x
+      block:
+
+        - name: GPG present
+          ansible.builtin.apt:
+            pkg:
+              - gpg
+
+        - name: GPG public key for contact@packagist.com present
+          ansible.builtin.copy:
+            src: packagist.asc
+            dest: /root/packagist.asc
+            mode: 0600
+
+        - name: GitHub GPG public key imported
+          ansible.builtin.command: gpg --import /root/packagist.asc
+          register: composer_gpg_import
+          changed_when: ( "not changed" not in composer_gpg_import.stderr )
+
+        - name: Composer GPG signature present
+          ansible.builtin.get_url:
+            url: "https://github.com/composer/composer/releases/download/{% if composer_version == 'latest' %}{{ composer_latest }}{% else %}{{ composer_version }}{% endif %}/composer.phar.asc"
+            dest: /root/composer.phar.asc
+            force: true
+            mode: 0600
+
+        - name: Check the Composer GPG signature
+          ansible.builtin.command: gpg --verify --logger-fd 1 /root/composer.phar.asc
+          register: composer_gpg_check
+          check_mode: false
+          changed_when: false
+          failed_when: ( "Good signature" not in composer_gpg_check.stdout )
+
       when: ( composer_version == "latest" ) or ( composer_version is version('2', '>') )
 
     - name: Install Composer
