@@ -2,11 +2,6 @@
 - name: Install and potentially update Composer
   block:
 
-    - name: PHP CLI present
-      ansible.builtin.apt:
-        pkg:
-          - php-cli
-
     - name: Include Composer version checks
       ansible.builtin.include_tasks: checks.yml
 

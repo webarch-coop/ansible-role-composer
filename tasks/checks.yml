@@ -2,10 +2,10 @@
 - name: Composer and PHP version checks
   block:
 
-    - name: Print the version of Composer required
-      ansible.builtin.debug:
-        var: composer_version
-        verbosity: 1
+    - name: The role requires PHP so check if php is installed
+      ansible.builtin.command: which php
+      check_mode: false
+      changed_when: false
 
     - name: Check the default version of PHP
       ansible.builtin.command: php -v
@@ -15,13 +15,30 @@
 
     - name: Set a fact for the default version of PHP
       ansible.builtin.set_fact:
-        composer_php_version: "{{ line.split(' ')[1] }}"
+        composer_php_version: "{{ line.split(' ')[1] | regex_replace('-.*$') }}"
       when: ansible_loop.first
       loop: "{{ composer_php_v.stdout_lines }}"
       loop_control:
         loop_var: line
         extended: true
         label: "{{ ansible_loop.index }}"
+
+    - name: Print the version of PHP installed
+      ansible.builtin.debug:
+        var: composer_php_version
+        verbosity: 1
+
+    - name: Print the version of Composer required
+      ansible.builtin.debug:
+        var: composer_version
+        verbosity: 1
+
+    - name: Check if Composer is installed
+      ansible.builtin.command: which composer
+      check_mode: false
+      changed_when: false
+      register: composer_which
+      failed_when: composer_which.rc is not regex('0|1')
 
     - name: Check installed Composer version
       block:
@@ -73,8 +90,8 @@
           ansible.builtin.get_url:
             url: https://getcomposer.org/download/latest-2.2.x/composer.phar
             dest: /root/composer.2.2.x.phar
-            check_mode: false
-            changed_when: false
+          check_mode: false
+          changed_when: false
 
         - name: Check the latest 2.2 LTS version of Composer
           ansible.builtin.command: php composer.2.2.x.phar --no-ansi -V -n
@@ -84,13 +101,23 @@
           changed_when: false
           register: composer_v_lts
 
-        - name: Set a fact for the installed version of Composer
+        - name: Set a fact for the latest 2.2 LTS version of Composer
           ansible.builtin.set_fact:
             composer_lts: "{{ composer_v_lts.stdout.split(' ')[2] | trim }}"
 
         - name: Print the latest LTS version of Composer
           ansible.builtin.debug:
             var: composer_lts
+            verbosity: 1
+
+        - name: Set the Composer version to be installed to the latest LTS when the default PHP version is <= 7.2.4
+          ansible.builtin.set_fact:
+            composer_version: "{{ composer_lts }}"
+          when: composer_version == "latest" 
+
+        - name: Print the version of Composer required
+          ansible.builtin.debug:
+            var: composer_version
             verbosity: 1
 
       when: composer_php_version is version('7.2.4', '<=')
@@ -107,13 +134,6 @@
         that:
           - composer_version is version('2.3.0', '<')
       when: composer_php_version is version('7.2.4', '<=')
-
-    - name: Check if Composer is installed
-      ansible.builtin.command: which composer
-      check_mode: false
-      changed_when: false
-      register: composer_which
-      failed_when: composer_which.rc is not regex('0|1')
 
   tags:
     - composer
