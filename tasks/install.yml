@@ -13,13 +13,13 @@
         src: packagist.asc
         dest: /root/packagist.asc
         mode: 0600
-      when: ( composer_version == "latest" ) or ( composer_version is version('2', '>')
+      when: ( composer_version == "latest" ) or ( composer_version is version('2', '>') )
 
     - name: GitHub GPG public key imported
       ansible.builtin.command: gpg --import /root/packagist.asc
       register: composer_gpg_import
       changed_when: ( "not changed" not in composer_gpg_import.stderr )
-      when: ( composer_version == "latest" ) or ( composer_version is version('2', '>')
+      when: ( composer_version == "latest" ) or ( composer_version is version('2', '>') )
 
     - name: Composer GPG signature present
       ansible.builtin.get_url:
@@ -27,7 +27,7 @@
         dest: /root/composer.phar.asc
         force: true
         mode: 0600
-      when: ( composer_version == "latest" ) or ( composer_version is version('2', '>')
+      when: ( composer_version == "latest" ) or ( composer_version is version('2', '>') )
 
     - name: Composer present
       ansible.builtin.get_url:
@@ -42,7 +42,7 @@
       check_mode: false
       changed_when: false
       failed_when: ( "Good signature" not in composer_gpg_check.stdout )
-      when: ( composer_version == "latest" ) or ( composer_version is version('2', '>')
+      when: ( composer_version == "latest" ) or ( composer_version is version('2', '>') )
 
     - name: Install Composer
       ansible.builtin.copy:
