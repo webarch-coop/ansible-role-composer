@@ -2,7 +2,7 @@
 
 [![pipeline status](https://git.coop/webarch/composer/badges/master/pipeline.svg)](https://git.coop/webarch/composer/-/commits/master)
 
-An Ansible role which downloads installs [Composer](https://getcomposer.org/) globally to `/usr/local/bin/composer`, there are two [default variables](defaults/main.yml):
+Ansible role for Debian and Ubuntu which downloads installs [Composer](https://getcomposer.org/) globally to `/usr/local/bin/composer`, there are two [default variables](defaults/main.yml):
 
 | Variable name        | Default value    | Comment                                              |
 |----------------------|------------------|------------------------------------------------------|

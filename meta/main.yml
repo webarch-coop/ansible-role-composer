@@ -3,13 +3,14 @@ galaxy_info:
   role_name: composer
   author: Chris Croome
   namespace: chriscroome
-  description: Ansible role for installing Composer
+  description: Ansible role for installing Composer dependency manager for PHP on Debian and Ubuntu
   company: Webarchitects Co-operative
-  license: license (GPLv3)
+  license: GNU General Public License v3.0 (GPLv3)
   min_ansible_version: 2.9
   platforms:
     - name: debian
       versions:
+        - bookworm
         - bullseye
         - buster
         - stretch
@@ -18,5 +19,11 @@ galaxy_info:
         - focal
         - bionic
         - xenial
-  galaxy_tags: []
+  galaxy_tags:
+    - composer
+    - php
+    - packaging
+    - web
+    - debian
+    - ubuntu
 ...
