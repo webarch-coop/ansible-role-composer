@@ -21,7 +21,7 @@
       loop_control:
         loop_var: line
         extended: true
-        label: "{{ ansible_loop.index }}"
+        label: "line {{ ansible_loop.index }}"
 
     - name: Print the version of PHP installed
       ansible.builtin.debug:
