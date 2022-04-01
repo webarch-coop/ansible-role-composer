@@ -13,6 +13,6 @@ If the `composer_php` version is `< 7.2.5` then the 2.2 LTS version of Composer 
 
 Note that this role doesn't use [the installer script](https://getcomposer.org/doc/faqs/how-to-install-composer-programmatically.md), but downloads Composer from [GitHub](https://github.com/composer/composer/releases), checks the GPG signature (unless the `composer_version` `< 2`, in which case the `.phar` file doesn't have a GPG signature) and then validates and installs it.
 
-The primary URL of this repo is [`https://git.coop/webarch/composer`](https://git.coop/webarch/composer) however it is also [mirrored to GitHub](https://github.com/webarch-coop/ansible-role-composer) and [available via Ansible Galaxy](https://galaxy.ansible.com/chriscroome/composer).
+The primary URL of this repo is [`https://git.coop/webarch/composer`](https://git.coop/webarch/composer) and this is where the [release notes](https://git.coop/webarch/composer/-/releases) are, it is also [mirrored to GitHub](https://github.com/webarch-coop/ansible-role-composer) and [available via Ansible Galaxy](https://galaxy.ansible.com/chriscroome/composer).
 
 The [localhost](https://git.coop/webarch/localhost) repo can be used to run this role on the `localhost`.
