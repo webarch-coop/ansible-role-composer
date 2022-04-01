@@ -51,7 +51,7 @@
 
         - name: Set a fact for the installed version of Composer
           ansible.builtin.set_fact:
-            composer_installed: "{{ composer_v.stdout.split(' ')[2] | trim }}"
+            composer_installed: "{{ composer_v.stdout | regex_replace('^Composer') | regex_replace('version') |  regex_replace('20\d\d[- /.](0[1-9]|1[012])[- /.](0[1-9]|[12][0-9]|3[01])' | regex_replace('(?:[01]\d|2[0-3]):[0-5]\d:[0-5]\d') | trim }}"
 
         - name: Print the installed version of Composer
           ansible.builtin.debug:
