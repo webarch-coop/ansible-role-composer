@@ -2,18 +2,18 @@
 - name: Composer and PHP version checks
   block:
 
-    - name: The role requires PHP so check if php is installed
-      ansible.builtin.command: which php
+    - name: "The role requires PHP so check if {{ composer_php }} is installed"
+      ansible.builtin.command: "which {{ composer_php }}"
       check_mode: false
       changed_when: false
 
-    - name: Check the default version of PHP
-      ansible.builtin.command: php -v
+    - name: Check the version of PHP
+      ansible.builtin.command: "{{ composer_php }} -v"
       check_mode: false
       changed_when: false
       register: composer_php_v
 
-    - name: Set a fact for the default version of PHP
+    - name: Set a fact for the version of PHP
       ansible.builtin.set_fact:
         composer_php_version: "{{ line.split(' ')[1] | regex_replace('-.*$') }}"
       when: ansible_loop.first
@@ -94,7 +94,7 @@
           changed_when: false
 
         - name: Check the latest 2.2 LTS version of Composer
-          ansible.builtin.command: php composer.2.2.x.phar --no-ansi -V -n
+          ansible.builtin.command: "{{ composer_php }} composer.2.2.x.phar --no-ansi -V -n"
           args:
             chdir: /root
           check_mode: false

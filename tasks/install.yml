@@ -57,7 +57,7 @@
             src: /root/composer.phar
             dest: /usr/local/bin/composer
             mode: 0755
-            validate: php %s -n --no-ansi -V
+            validate: "{{ composer_php }} %s -n --no-ansi -V"
 
       when: not ansible_check_mode
 
