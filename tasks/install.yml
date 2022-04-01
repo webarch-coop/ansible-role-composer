@@ -2,7 +2,7 @@
 - name: Install Composer
   block:
 
-    - name: Printy the version of Composer to be installed
+    - name: Print the version of Composer to be installed
       ansible.builtin.debug:
         msg: >
           {% if composer_installed is defined %}Currently Composer version {{ composer_installed }} is installed and{% endif %}
