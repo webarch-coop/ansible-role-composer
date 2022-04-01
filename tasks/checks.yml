@@ -49,6 +49,10 @@
           changed_when: false
           register: composer_v
 
+        # The version format might be in a couple of forms
+        # Composer version 1.10.9 2020-07-16 12:57:00
+        # or
+        # Composer 2.0.9 2021-01-27 16:09:27
         - name: Set a fact for the installed version of Composer
           ansible.builtin.set_fact:
             composer_installed: "{{ ( composer_v.stdout | regex_replace('Composer') | regex_replace('version') | trim ).split(' ')[0] | trim }}"
