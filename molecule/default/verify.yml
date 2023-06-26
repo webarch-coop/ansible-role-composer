@@ -27,7 +27,7 @@
 
     - name: Set a fact for the latest version of Composer
       ansible.builtin.set_fact:
-        molecule_composer_latest: "{{ composer_headers.location | urlsplit('path') | basename }}"
+        molecule_composer_latest: "{{ molecule_composer_headers.location | urlsplit('path') | basename }}"
 
     - name: Print the latest version of Composer
       ansible.builtin.debug:

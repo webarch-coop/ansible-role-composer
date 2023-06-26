@@ -10,15 +10,18 @@ Set `composer` to `true` for the tasks in this role to be run.
 
 Documentation for the [defaults/main.yml](defaults/main.yml) variables follow, this documentation has been generated from the [meta/argument_specs.yml](meta/argument_specs.yml).
 
-### Entrypoint: main
+{% for entrypoint in argument_specs.keys() %}
+{%- set path, options=entrypoint_options[entrypoint][0] -%}
+### Entrypoint: {{ entrypoint }}
 
-The main entry point for the composer role.
+{{ argument_specs[entrypoint].short_description }}
 
 |Option|Description|Type|Required|
 |---|---|---|---|
-| composer | Run the tasks in this role. | bool | yes |
-| composer_version | The composer version. | str | yes |
-
+{%- for name, details in options.items() %}
+| {{ name }} | {{ details.display_description }} | {{ details.display_type }} | {{ details.display_required }} |
+{%- endfor %}
+{% endfor %}
 ## Repository
 
 The primary URL of this repo is [`https://git.coop/webarch/composer`](https://git.coop/webarch/composer) and this is where the [release notes](https://git.coop/webarch/composer/-/releases) are, it is also [mirrored to GitHub](https://github.com/webarch-coop/ansible-role-composer) and [available via Ansible Galaxy](https://galaxy.ansible.com/chriscroome/composer).
