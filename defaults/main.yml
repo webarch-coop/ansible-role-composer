@@ -1,7 +1,4 @@
 ---
-# If php is php8 or something else set the composer_php variable
-composer_php: php
-# Specify a tag from https://github.com/composer/composer/releases
-# or "latest" for the latest release
+composer: false
 composer_version: latest
 ...

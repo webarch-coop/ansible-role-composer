@@ -1,3 +1,12 @@
+# Copyright 2019-2023 Chris Croome
+#
+# This file is part of the Webarchitects Composer Ansible role.
+#
+# The Webarchitects Composer Ansible role is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+#
+# The Webarchitects Composer Ansible role is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License along with the Webarchitects Composer Ansible role. If not, see <https://www.gnu.org/licenses/>.
 ---
 - name: Install Composer
   block:
@@ -13,53 +22,49 @@
         url: "https://github.com/composer/composer/releases/download/{% if composer_version == 'latest' %}{{ composer_latest }}{% else %}{{ composer_version }}{% endif %}/composer.phar"
         dest: /root/composer.phar
         force: true
-        mode: 0600
+        mode: "0600"
+      check_mode: false
 
-    - name: Install Copmoser when not in Ansible check mode
+    - name: Check the GPG signature when installing version 2.x
       block:
 
-        - name: Check the GPG signature when installing version 2.x
-          block:
-
-            - name: GPG present
-              ansible.builtin.apt:
-                pkg:
-                  - gpg
-
-            - name: GPG public key for contact@packagist.com present
-              ansible.builtin.copy:
-                src: packagist.asc
-                dest: /root/packagist.asc
-                mode: 0600
-
-            - name: GitHub GPG public key imported
-              ansible.builtin.command: gpg --import /root/packagist.asc
-              register: composer_gpg_import
-              changed_when: ( "not changed" not in composer_gpg_import.stderr )
-
-            - name: Composer GPG signature present
-              ansible.builtin.get_url:
-                url: "https://github.com/composer/composer/releases/download/{% if composer_version == 'latest' %}{{ composer_latest }}{% else %}{{ composer_version }}{% endif %}/composer.phar.asc"
-                dest: /root/composer.phar.asc
-                force: true
-                mode: 0600
-
-            - name: Check the Composer GPG signature
-              ansible.builtin.command: gpg --verify --logger-fd 1 /root/composer.phar.asc
-              register: composer_gpg_check
-              failed_when: ( "Good signature" not in composer_gpg_check.stdout )
-
-          when: ( composer_version == "latest" ) or ( composer_version is version('2', '>') )
-
-        - name: Install Composer
+        - name: GPG public key for contact@packagist.com present
           ansible.builtin.copy:
-            remote_src: true
-            src: /root/composer.phar
-            dest: /usr/local/bin/composer
-            mode: 0755
-            validate: "{{ composer_php }} %s -n --no-ansi -V"
+            src: packagist.asc
+            dest: /root/packagist.asc
+            mode: "0600"
+          check_mode: false
 
-      when: not ansible_check_mode
+        - name: GitHub GPG public key imported
+          ansible.builtin.command: gpg --import /root/packagist.asc
+          check_mode: false
+          register: composer_gpg_import
+          changed_when: ( "not changed" not in composer_gpg_import.stderr )
+
+        - name: Composer GPG signature present
+          ansible.builtin.get_url:
+            url: "https://github.com/composer/composer/releases/download/{% if composer_version == 'latest' %}{{ composer_latest }}{% else %}{{ composer_version }}{% endif %}/composer.phar.asc"
+            dest: /root/composer.phar.asc
+            force: true
+            mode: "0600"
+          check_mode: false
+
+        - name: Check the Composer GPG signature
+          ansible.builtin.command: gpg --verify --logger-fd 1 /root/composer.phar.asc
+          check_mode: false
+          changed_when: false
+          register: composer_gpg_check
+          failed_when: ( "Good signature" not in composer_gpg_check.stdout )
+
+      when: ( composer_version == "latest" ) or ( composer_version is version('2', '>') )
+
+    - name: Install Composer
+      ansible.builtin.copy:
+        remote_src: true
+        src: /root/composer.phar
+        dest: /usr/local/bin/composer
+        mode: "0755"
+        validate: "{{ composer_php }} %s -n --no-ansi -V"
 
   tags:
     - composer

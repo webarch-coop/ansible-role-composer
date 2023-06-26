@@ -1,0 +1,55 @@
+# Copyright 2019-2023 Chris Croome
+#
+# This file is part of the Webarchitects Composer Ansible role.
+#
+# The Webarchitects Composer Ansible role is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+#
+# The Webarchitects Composer Ansible role is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License along with the Webarchitects Composer Ansible role. If not, see <https://www.gnu.org/licenses/>.
+---
+- name: Verify as user
+  become: false
+  connection: local
+  gather_facts: true
+  hosts:
+    - localhost
+  tasks:
+
+    - name: Check the latest version of Composer
+      ansible.builtin.uri:
+        url: https://github.com/composer/composer/releases/latest
+        method: HEAD
+        status_code: 302
+        follow_redirects: none
+      check_mode: false
+      register: molecule_composer_headers
+
+    - name: Set a fact for the latest version of Composer
+      ansible.builtin.set_fact:
+        molecule_composer_latest: "{{ composer_headers.location | urlsplit('path') | basename }}"
+
+    - name: Print the latest version of Composer
+      ansible.builtin.debug:
+        var: molecule_composer_latest
+
+    - name: Run composer -V
+      ansible.builtin.command: /usr/local/bin/composer --no-ansi -V -n
+      check_mode: false
+      changed_when: false
+      register: molecule_composer_v
+
+    - name: Set a fact for the installed version of Composer
+      ansible.builtin.set_fact:
+        composer_installed: "{{ (molecule_composer_v.stdout | regex_replace('Composer') | regex_replace('version') | trim ).split(' ')[0] | trim }}"
+
+    - name: Print the installed version of Composer
+      ansible.builtin.debug:
+        var: molecule_composer_installed
+
+    - name: The instaled version of composer should match the latest version
+      ansible.builtin.assert:
+        that:
+          - molecule_composer_installed == molecule_composer_latest
+        quite: true
+...
