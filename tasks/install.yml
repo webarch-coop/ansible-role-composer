@@ -64,7 +64,7 @@
         src: /root/composer.phar
         dest: /usr/local/bin/composer
         mode: "0755"
-        validate: "{{ composer_php }} %s -n --no-ansi -V"
+        validate: php %s -n --no-ansi -V
 
   tags:
     - composer
