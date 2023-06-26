@@ -32,7 +32,7 @@
     - name: Install Composer
       ansible.builtin.include_tasks: install.yml
       when: >
-        ( composer_which.rc == 1 ) or
+        ( not composer_path.stat.exists | bool ) or
         ( composer_version == "latest" and composer_installed != composer_latest ) or
         ( composer_version != "latest" and composer_installed != composer_version )
 
