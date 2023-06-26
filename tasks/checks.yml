@@ -32,7 +32,8 @@
         verbosity: 1
 
     - name: Check if Composer is installed
-      ansible.builtin.stat: /usr/local/bin/composer
+      ansible.builtin.stat:
+        path: /usr/local/bin/composer
       check_mode: false
       changed_when: false
       register: composer_path
