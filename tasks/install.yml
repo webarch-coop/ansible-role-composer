@@ -13,8 +13,8 @@
 
     - name: Print the version of Composer to be installed
       ansible.builtin.debug:
-        msg: >
-          {% if composer_installed is defined %}Currently Composer version {{ composer_installed }} is installed and{% endif %}
+        msg: >-
+          {%- if composer_installed is defined %}Currently Composer version {{ composer_installed }} is installed and {% endif -%}
           Composer version {% if composer_version == 'latest' %}{{ composer_latest }}{% else %}{{ composer_version }}{% endif %} is to be installed
 
     - name: Composer present

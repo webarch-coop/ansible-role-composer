@@ -1,4 +1,4 @@
-# Webarchitects Ansible Composer Role
+#{# j2lint: disable=jinja-statements-delimiter #} Webarchitects Ansible Composer Role
 
 [![pipeline status](https://git.coop/webarch/composer/badges/master/pipeline.svg)](https://git.coop/webarch/composer/-/commits/master)
 
@@ -11,16 +11,16 @@ Set `composer` to `true` for the tasks in this role to be run.
 Documentation for the [defaults/main.yml](defaults/main.yml) variables follow, this documentation has been generated from the [meta/argument_specs.yml](meta/argument_specs.yml).
 
 {% for entrypoint in argument_specs.keys() %}
-{%- set path, options=entrypoint_options[entrypoint][0] -%}
+{%-    set path, options=entrypoint_options[entrypoint][0] -%}
 ### Entrypoint: {{ entrypoint }}
 
 {{ argument_specs[entrypoint].short_description }}
 
 |Option|Description|Type|Required|
 |---|---|---|---|
-{%- for name, details in options.items() %}
+{%-    for name, details in options.items() %}
 | {{ name }} | {{ details.display_description }} | {{ details.display_type }} | {{ details.display_required }} |
-{%- endfor %}
+{%-    endfor %}
 {% endfor %}
 ## Repository
 
