@@ -21,7 +21,7 @@
       ansible.builtin.copy:
         content: "{{ composer_completion_bash.stdout }}"
         dest: /root/composer_completion
-        mode: "600"
+        mode: "644"
         owner: root
         group: root
       check_mode: false
