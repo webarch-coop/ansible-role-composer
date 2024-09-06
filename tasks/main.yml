@@ -1,4 +1,4 @@
-# Copyright 2019-2023 Chris Croome
+# Copyright 2019-2024 Chris Croome
 #
 # This file is part of the Webarchitects Composer Ansible role.
 #
@@ -26,15 +26,31 @@
         update-cache: true
         state: present
 
+    - name: Include apt role local fact tasks
+      ansible.builtin.include_role:
+        name: apt
+        tasks_from: local_facts.yml
+      when: ansible_local.bash.path is not defined
+
     - name: Include Composer version checks
       ansible.builtin.include_tasks: checks.yml
 
-    - name: Install Composer
+    - name: Include Composer install tasks
       ansible.builtin.include_tasks: install.yml
       when: >
         ( not composer_path.stat.exists | bool ) or
         ( composer_version == "latest" and composer_installed != composer_latest ) or
         ( composer_version != "latest" and composer_installed != composer_version )
+
+    - name: Include Composer version checks
+      ansible.builtin.include_tasks: checks.yml
+
+    - name: Include Composer Bash completion tasks for composer >= 2.7.9
+      ansible.builtin.include_tasks: completion.yml
+      when:
+        - ansible_local.bash.path is defined
+        - composer_path.stat.exists | bool
+        - composer_installed is version('2.7.9', 'ge')
 
   when: composer | bool
   tags:

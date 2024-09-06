@@ -8,16 +8,8 @@
 #
 # You should have received a copy of the GNU General Public License along with the Webarchitects Composer Ansible role. If not, see <https://www.gnu.org/licenses/>.
 ---
-argument_specs:
-  main:
-    short_description: The main entry point for the composer role.
-    options:
-      composer:
-        type: bool
-        required: true
-        description: Run the tasks in this role.
-      composer_version:
-        type: str
-        required: true
-        description: The composer version.
+- name: apt
+  scm: git
+  src: https://git.coop/webarch/apt.git
+  version: 4.5.0  # apt
 ...

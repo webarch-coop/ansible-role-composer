@@ -1,0 +1,41 @@
+# Copyright 2019-2024 Chris Croome
+#
+# This file is part of the Webarchitects Composer Ansible role.
+#
+# The Webarchitects Composer Ansible role is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+#
+# The Webarchitects Composer Ansible role is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License along with the Webarchitects Composer Ansible role. If not, see <https://www.gnu.org/licenses/>.
+---
+- name: Composer Bash completion
+  block:
+
+    - name: Generate Composer Bash completion
+      ansible.builtin.command: /usr/local/bin/composer completion bash
+      check_mode: false
+      register: composer_completion_bash
+      changed_when: false
+
+    - name: Write Composer Bash completion
+      ansible.builtin.copy:
+        content: "{{ composer_completion_bash.stdout }}"
+        dest: /root/composer_completion
+        mode: "600"
+        owner: root
+        group: root
+      check_mode: false
+
+    - name: Install Composer Bash completion
+      ansible.builtin.copy:
+        src: /root/composer_completion
+        dest: /etc/bash_completion.d/composer
+        remote_src: true
+        mode: "644"
+        owner: root
+        group: root
+        validate: "{{ ansible_local.bash.path }} -n %s"
+
+  tags:
+    - composer
+...

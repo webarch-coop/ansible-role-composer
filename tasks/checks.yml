@@ -1,4 +1,4 @@
-# Copyright 2019-2023 Chris Croome
+# Copyright 2019-2024 Chris Croome
 #
 # This file is part of the Webarchitects Composer Ansible role.
 #
@@ -90,12 +90,14 @@
       ansible.builtin.assert:
         that:
           - composer_php_version is version('7.2.5', '>=')
+        quiet: "{% if ansible_check_mode or ansible_verbosity >= 1 %}false{% else %}true{% endif %}"
       when: ( composer_version == "latest" ) or ( composer_version is version('2.3.0', '>=' ) )
 
     - name: Check that the version of Composer to be installed is < 2.3.0 when PHP <= 7.2.4
       ansible.builtin.assert:
         that:
           - composer_version is version('2.3.0', '<')
+        quiet: "{% if ansible_check_mode or ansible_verbosity >= 1 %}false{% else %}true{% endif %}"
       when: composer_php_version is version('7.2.4', '<=')
 
   tags:
