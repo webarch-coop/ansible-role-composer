@@ -34,7 +34,7 @@
         content: "{{ composer_completion_bash.stdout | ansible.builtin.regex_replace('composer-2.7.9', 'composer') }}"
         # content: "{{ composer_completion_bash.stdout }}"
         dest: /root/composer_completion
-        mode: "0600"
+        mode: "0644"
         owner: root
         group: root
       check_mode: false
