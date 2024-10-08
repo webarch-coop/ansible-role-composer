@@ -49,6 +49,7 @@
       ansible.builtin.include_tasks: completion.yml
       when:
         - ansible_local.bash.path is defined
+        - composer_php_version is ansible.builtin.version('7.2.5', 'gt')
         # Update this when https://github.com/composer/composer/issues/12153 is fixed
         # - composer_path.stat.exists | bool
         # - composer_installed is version('2.7.9', 'ge')
