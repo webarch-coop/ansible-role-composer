@@ -11,8 +11,19 @@
 - name: Composer Bash completion
   block:
 
+    # Comment this task when https://github.com/composer/composer/issues/12153 is fixed
+    - name: Composer 2.7.9 present
+      ansible.builtin.get_url:
+        url: "https://github.com/composer/composer/releases/download/2.7.9/composer.phar"
+        dest: /root/composer-2.7.9
+        force: true
+        mode: "0700"
+      check_mode: false
+
+    # Update this task when https://github.com/composer/composer/issues/12153 is fixed
     - name: Generate Composer Bash completion
-      ansible.builtin.command: /usr/local/bin/composer completion bash
+      # ansible.builtin.command: /usr/local/bin/composer completion bash
+      ansible.builtin.command: /root/composer-2.7.9 completion bash
       check_mode: false
       register: composer_completion_bash
       changed_when: false

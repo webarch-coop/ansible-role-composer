@@ -45,12 +45,13 @@
     - name: Include Composer version checks
       ansible.builtin.include_tasks: checks.yml
 
-    - name: Include Composer Bash completion tasks for composer >= 2.7.9
+    - name: Include Composer Bash completion tasks for composer
       ansible.builtin.include_tasks: completion.yml
       when:
         - ansible_local.bash.path is defined
-        - composer_path.stat.exists | bool
-        - composer_installed is version('2.7.9', 'ge')
+        # Update this when https://github.com/composer/composer/issues/12153 is fixed
+        # - composer_path.stat.exists | bool
+        # - composer_installed is version('2.7.9', 'ge')
 
   when: composer | bool
   tags:
