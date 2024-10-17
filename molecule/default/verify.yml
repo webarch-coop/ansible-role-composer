@@ -33,10 +33,10 @@
       ansible.builtin.debug:
         var: molecule_composer_latest
 
-    - name: Check the installed Composer version string
+    - name: Check the latest Composer version string
       ansible.builtin.assert:
         that:
-          - molecule_composer_installed is ansible.builtin.version('1.0.0', 'gt', version_type='semver')
+          - molecule_composer_latest is ansible.builtin.version('1.0.0', 'gt', version_type='semver')
         quiet: true
 
     - name: Run composer -V
