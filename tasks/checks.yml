@@ -53,12 +53,18 @@
         # Composer 2.0.9 2021-01-27 16:09:27
         - name: Set a fact for the installed version of Composer
           ansible.builtin.set_fact:
-            composer_installed: "{{ (composer_v.stdout_lines)[0] | ansible.builtin.regex_replace('Composer') | ansible.builtin.regex_replace('version') | ansible.builtin.regex_replace('[ ].*$') | trim }}"
+            composer_installed: "{{ ((composer_v.stdout_lines)[0] | ansible.builtin.regex_replace('^Composer[ ]?(version)?[ ]?') | trim | ansible.builtin.split(' '))[0] }}"
 
         - name: Print the installed version of Composer
           ansible.builtin.debug:
             var: composer_installed
             verbosity: 1
+
+        - name: Check the installed Composer version string
+          ansible.builtin.assert:
+            that:
+              - composer_installed is ansible.builtin.version('1.0.0', 'gt', version_type='semver')
+            quiet: "{% if ansible_verbosity == 0 %}true{% else %}false{% endif %}"
 
       when: composer_path.stat.exists | bool
 
@@ -82,6 +88,12 @@
           ansible.builtin.debug:
             var: composer_latest
             verbosity: 1
+
+        - name: Check the latest Composer version string
+          ansible.builtin.assert:
+            that:
+              - composer_latest is ansible.builtin.version('1.0.0', 'gt', version_type='semver')
+            quiet: "{% if ansible_verbosity == 0 %}true{% else %}false{% endif %}"
 
       when: composer_version == "latest"
 
