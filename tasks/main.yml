@@ -30,7 +30,7 @@
       ansible.builtin.include_role:
         name: apt
         tasks_from: local_facts.yml
-      when: ansible_local.bash.path is not defined
+      when: ansible_facts.ansible_local.bash.path is not defined
 
     - name: Include Composer version checks
       ansible.builtin.include_tasks: checks.yml
@@ -48,11 +48,10 @@
     - name: Include Composer Bash completion tasks for composer
       ansible.builtin.include_tasks: completion.yml
       when:
-        - ansible_local.bash.path is defined
+        - ansible_facts.aansible_local.bash.path is defined
         - composer_php_version is ansible.builtin.version('7.2.5', 'gt')
-        # Update this when https://github.com/composer/composer/issues/12153 is fixed
-        # - composer_path.stat.exists | bool
-        # - composer_installed is version('2.7.9', 'ge')
+        - composer_path.stat.exists | bool
+        - composer_installed is version('2.7.9', 'ge')
 
   when: composer | bool
   tags:

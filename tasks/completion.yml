@@ -34,7 +34,7 @@
         mode: "0644"
         owner: root
         group: root
-        validate: "{{ ansible_local.bash.path }} -n %s"
+        validate: "{{ ansible_facts.ansible_local.bash.path }} -n %s"
 
   tags:
     - composer
