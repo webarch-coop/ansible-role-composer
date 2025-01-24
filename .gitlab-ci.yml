@@ -1,4 +1,4 @@
-# Copyright 2019-2024 Chris Croome
+# Copyright 2019-2025 Chris Croome
 #
 # This file is part of the Webarchitects Composer Ansible role.
 #
@@ -40,28 +40,28 @@ stages:
   - noble
   - trixie
 bookworm:
-  image: registry.git.coop/webarch/containers/images/bookworm:20241008
+  image: registry.git.coop/webarch/containers/images/bookworm:20250113
   stage: bookworm
   script:
     - pre-commit install
     - pre-commit run --all-files
     - molecule test
 jammy:
-  image: registry.git.coop/webarch/containers/images/jammy:20241008
+  image: registry.git.coop/webarch/containers/images/jammy:20250113
   stage: jammy
   script:
     - pre-commit install
     - pre-commit run --all-files
     - molecule test
 noble:
-  image: registry.git.coop/webarch/containers/images/noble:20241008
+  image: registry.git.coop/webarch/containers/images/noble:20250113
   stage: noble
   script:
     - pre-commit install
     - pre-commit run --all-files
     - molecule test
 trixie:
-  image: registry.git.coop/webarch/containers/images/trixie:20241008
+  image: registry.git.coop/webarch/containers/images/trixie:20250113
   stage: trixie
   script:
     - pre-commit install

@@ -2,7 +2,7 @@
 
 [![pipeline status](https://git.coop/webarch/composer/badges/master/pipeline.svg)](https://git.coop/webarch/composer/-/commits/master)
 
-An ansible role for Debian and Ubuntu which downloads installs [Composer](https://getcomposer.org/) globally to `/usr/local/bin/composer`.
+An ansible role for Debian and Ubuntu which downloads installs the latest version of [composer](https://getcomposer.org/) globally to `/usr/local/bin/composer`.
 
 ## Role variables
 
@@ -25,6 +25,6 @@ The primary URL of this repo is [`https://git.coop/webarch/composer`](https://gi
 
 ## Copyright
 
-Copyright 2019-2024 Chris Croome, &lt;[chris@webarchitects.co.uk](mailto:chris@webarchitects.co.uk)&gt;.
+Copyright 2019-2025 Chris Croome, &lt;[chris@webarchitects.co.uk](mailto:chris@webarchitects.co.uk)&gt;.
 
 This role is released under [the same terms as Ansible itself](https://github.com/ansible/ansible/blob/devel/COPYING), the [GNU GPLv3](LICENSE).
